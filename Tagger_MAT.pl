@@ -414,7 +414,7 @@ sub Tagger_MAT {
 
 			#---------------------------------------------------
 
-			#tags split infinitives
+			#tags split infinitives #Elen: Removed tags that do not exist and added XX0 for negation
 			if (($word[$j] =~ /\bto_/i && $word[$j+1] =~ /_RB|\bjust_|\breally_|\bmost_|\bmore_|_XX0/i && $word[$j+2] =~ /_V/) ||
 				($word[$j] =~ /\bto_/i && $word[$j+1] =~ /_RB|\bjust_|\breally_|\bmost_|\bmore_|_XX0/i && $word[$j+2] =~ /_RB|_XX0/ && $word[$j+3] =~ /_V/)){
 					$word[$j] =~ s/_(\w+)/_$1 [SPIN]/;
@@ -422,7 +422,7 @@ sub Tagger_MAT {
 
 			#---------------------------------------------------
 
-			#tags split auxiliaries
+			#tags split auxiliaries #Elen: Removed tags that do not exist and added XX0 for negation
 			if (($word[$j] =~ /_MD|(\b($do))|(\b($have))|(\b($be))/i && $word[$j+1] =~ /_RB|\bjust_|\breally_|\bmost_|\bmore_|_XX0/i && $word[$j+2] =~ /_V/) ||
 				($word[$j] =~ /_MD|(\b($do))|(\b($have))|(\b($be))/i && $word[$j+1] =~ /_RB|\bjust_|\breally_|\bmost_|\bmore_|_XX0/i && $word[$j+2] =~ /_RB|_XX0/ && $word[$j+3] =~ /_V/)){
 					$word[$j] =~ s/_(\w+)/_$1 [SPAU]/;
@@ -569,11 +569,14 @@ sub Tagger_MAT {
 				$word[$j+2] =~ s/_\w+/_NULL/;
 			}
 			if (($word[$j-2] !~ /_DT|_QUAN|_CD|_JJ|_PRED|_PRPS|(\b$who)/i && $word[$j-1] =~ /\bsort_/i && $word[$j] =~ /\bof_/i) ||
-				($word[$j-2] !~ /_DT|_QUAN|_CD|_JJ|_PRED|_PRPS|(\b$who)/i && $word[$j-1] =~ /\bkind_/i && $word[$j] =~ /\bof_/i) ||
-				($word[$j-1] !~ /_DT|_QUAN|_CD|_JJ|_PRED|_PRPS|(\b$who)/i && $word[$j] =~ /\bkinda_/i)) {
+				($word[$j-2] !~ /_DT|_QUAN|_CD|_JJ|_PRED|_PRPS|(\b$who)/i && $word[$j-1] =~ /\bkind_/i && $word[$j] =~ /\bof_/i)) {
 				$word[$j] =~ s/_\w+/_HDG/;
 				$word[$j-1] =~ s/_\w+/_NULL/;
 			}
+			# Elen: Added "kinda" and "sorta"
+			if ($word[$j-1] !~ /_DT|_QUAN|_CD|_JJ|_PRED|_PRPS|(\b$who)/i && $word[$j] =~ /\bkinda_|\bsorta_/i) {
+				$word[$j] =~ s/_\w+/_HDG/;
+				}
 
 			#---------------------------------------------------
 
@@ -634,7 +637,7 @@ sub Tagger_MAT {
 			if ($word[$j-1] =~ /_,/ && $word[$j] =~ /\band_/i && $word[$j+1] =~ /\bthere_/i && $word[$j+2] =~ /(\b($be))/i) {
 				$word[$j] =~ s/_\w+/_ANDC/;
 			}
-			if ($word[$j-1] =~  /_\.|_:|_–/ && $word[$j] =~ /\band_/i) #ELF: End-of-clause punctuation only {
+			if ($word[$j-1] =~  /_\.|_:|_–/ && $word[$j] =~ /\band_/i) #Elen: Biber (1988) states: end-of-clause punctuation only {
 				$word[$j] =~ s/_\w+/_ANDC/;
 			}
 			if ($word[$j] =~ /\band_/i && $word[$j+1] =~ /(\b($wp))|(\b$who)|_CAUS|_CONC|_OSUB|_DPAR|_CONJ/i) {
@@ -695,12 +698,12 @@ sub Tagger_MAT {
 				$x =~ s/_\w+/_FPP1/;
 			}
 
-			#tags second person pronouns - ADDED "THOU","THY", "THEE", "THYSELF" - ELF: Added "ye" and "y'" for "y'all", "thine" and "ya" when tagged as a personal pronoun by the Stanford Tagger
+			#tags second person pronouns - ADDED "THOU","THY", "THEE", "THYSELF" - Elen: Added "ye" and "y'" for "y'all", "thine" and "ya" when tagged as a personal pronoun by the Stanford Tagger
 			if ($x =~ /\byou_|\byour_|\byourself_|\byourselves_|\bthy_|\bthee_|\bthyself_|\bthou_|\bye_PRP|\by'_|\bthine_|\bya_PRP/i) {
 				$x =~ s/_\w+/_SPP2/;
 			}
 
-			#tags third person pronouns - ELF: added themself in singular (cf. https://www.lexico.com/grammar/themselves-or-themself), added nominal possessive pronoun forms (hers, theirs), also added em_PRP for 'em.
+			#tags third person pronouns - Elen: added themself in singular (cf. https://www.lexico.com/grammar/themselves-or-themself), added nominal possessive pronoun forms (hers, theirs), also added em_PRP for 'em.
 			if ($x =~ /\bshe_|\bhe_|\bthey_|\bher_|\bhim_|\bthem_|\bhis_|\btheir_|\bhimself_|\bherself_|\bthemselves_|\bthemself_|\btheirs_|\bhers_|em_PRP/i) {
 				$x =~ s/_\w+/_TPP3/;
 			}
@@ -710,7 +713,7 @@ sub Tagger_MAT {
 				$x =~ s/_\w+/_PIT/;
 			}
 
-			#tags causative because - ELF added: cos, cus, coz, cuz and 'cause
+			#tags causative because - Elen added: cos, cus, coz, cuz and 'cause
 			if ($x =~ /\bbecause_|\bcos_|\cus_|\bcuz_|\bcoz_|\b'cause_/i) {
 				$x =~ s/_\w+/_CAUS/;
 			}
@@ -725,7 +728,7 @@ sub Tagger_MAT {
 				$x =~ s/_\w+/_COND/;
 			}
 
-			#tags possibility modals - ELF: added _MD onto all of these for better accuracy. And ca_MD which was missing for can't.
+			#tags possibility modals - Elen: added _MD onto all of these for better accuracy. And ca_MD which was missing for can't.
 			if ($x =~ /\bcan_MD|\bca_MD|\bmay_MD|\bmight_MD|\bcould_MD|\bca_MD/i) {
 				$x =~ s/_\w+/_POMD/;
 			}
